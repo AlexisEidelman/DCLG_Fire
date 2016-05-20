@@ -36,7 +36,7 @@ tab1 = tab[[x for x in tab.columns if x not in to_remove]]
 
 
 
-#  <- 
+#  <-
 rename = {'Numero Iris': "DCOMIRIS",
           u'Libelle Iris': "NOM_IRIS",
 
@@ -60,18 +60,16 @@ tab2['TimeOfCall'] = tab1[u'GDH début'].str[11:19]
 
 rename2 = {u'Motif De Départ 212 Motif De L alerte': "StopCodeDescription",
           u'ID206 CSTC': "PropertyCategory", # fake mais passons
-          u'Code Postal': 'Postcode_district',
-          u'NOM_IRIS':'WardName',
-          u'Total 329 Délai Présentation Des Premiers Intervenants':'FirstPumpArriving_AttendanceTime', 
+          # u'Code Postal': 'Postcode_district',
+          #u'NOM_IRIS':'WardName',
+          u'Total 329 Délai Présentation Des Premiers Intervenants':'FirstPumpArriving_AttendanceTime',
           }
 tab2.rename(columns = rename2, inplace=True)
-tab2['Postcode_district'] = tab2['Postcode_district'].astype(int)
+tab2[u'Code Postal'] = tab2[u'Code Postal'].astype(int)
 tab2['FirstPumpArriving_AttendanceTime'] = tab2['FirstPumpArriving_AttendanceTime'].astype(int)
-tab2.to_csv(os.path.join(path_DCLG, 'BSPP_TEST2.csv'),
+
+path_dest = "~/git/DCLG_Fire/static/data"
+tab2.to_csv(os.path.join(path_dest, 'BSPP_TEST2.csv'),
             encoding='utf8',
             index=False,
             sep=',')
-
-
-
-
