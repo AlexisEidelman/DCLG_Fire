@@ -96,8 +96,10 @@ body p {
   <div class="row">
     <div class="col-md-7" id="carte">
       <div class="btn-group">
-        <button id="B" type="button" class="btn btn-default">Code postal</button>
-        <button id="W" type="button" class="btn btn-default">Iris</button>
+        <button id="D" type="button" class="btn btn-default">Departement</button>
+        <button id="C" type="button" class="btn btn-default">Commune</button>
+        <button id="P" type="button" class="btn btn-default">Code Postal</button>
+        <button id="I" type="button" class="btn btn-default">Iris</button>
       </div>
 
       <!-- <strong>Borough/Ward Area:</strong> -->
@@ -219,19 +221,32 @@ body p {
 
 <script>
 
-  /////////////////////// Iris / Code Postal ////////////////////////////////////
+  /////////////////////// Iris / Code Postal / Commune / Departement ////////////////////////////////////
   kk = []
   kk.push(1)
 
-  B.onclick = function() {
-    kk.push(0);
+  D.onclick = function() {
+    kk.push(3);
     load();
   };
-  W.onclick = function() {
-    kk.push(1);
+  C.onclick = function() {
+    kk.push(2);
     load();
   };
 
+  P.onclick = function() {
+    kk.push(1);
+    load();
+  };
+  I.onclick = function() {
+    kk.push(0);
+    load();
+  };
+
+  // <button id="D" type="button" class="btn btn-default">Departement</button>
+  // <button id="C" type="button" class="btn btn-default">Commune</button>
+  // <button id="P" type="button" class="btn btn-default">Code Postal</button>
+  // <button id="I" type="button" class="btn btn-default">Iris</button>
 
 
 
@@ -259,10 +274,14 @@ body p {
 
   ll = []
   kk = []
+  kk0 = []
+  kk1 = []
   kk2 = []
   kk3 = []
-  Area = []
+  Area0 = []
+  Area1 = []
   Area2 = []
+  Area3 = []
   WA = []
   Wsum = []
 
@@ -315,22 +334,37 @@ body p {
       // kk2 contains number of wards in Borough and Total Area of Borough
       WA.push(csv)
 
-      kk2.push(d3.nest().key(function(d) {return d.NOM_IRIS})
+    kk0.push(d3.nest().key(function(d) {return d.NOM_IRIS})
       .rollup(function(leaves) { return {"Incidents": leaves.length, "total_area": d3.sum(leaves, function(d) {return parseFloat(d.IncidentGroup);})}
     })
     .entries(csv))
 
-    kk3.push(d3.nest().key(function(d) {return d['Code Postal']})
-    .rollup(function(leaves) { return {"Incidents": leaves.length, "total_area": d3.sum(leaves, function(d) {return parseFloat(d.IncidentGroup);})}
-  })
-  .entries(csv))
+    kk1.push(d3.nest().key(function(d) {return d['Code Postal']})
+      .rollup(function(leaves) { return {"Incidents": leaves.length, "total_area": d3.sum(leaves, function(d) {return parseFloat(d.IncidentGroup);})}
+    })
+    .entries(csv))
+
+    kk2.push(d3.nest().key(function(d) {return d['Code Commune']})
+      .rollup(function(leaves) { return {"Incidents": leaves.length, "total_area": d3.sum(leaves, function(d) {return parseFloat(d.IncidentGroup);})}
+    })
+    .entries(csv))
+
+    kk3.push(d3.nest().key(function(d) {return d['Numero Departement']})
+      .rollup(function(leaves) { return {"Incidents": leaves.length, "total_area": d3.sum(leaves, function(d) {return parseFloat(d.IncidentGroup);})}
+    })
+    .entries(csv))
+
+  for (var i=0; i<kk0[0].length; i++)
+  {Area0.push(kk0[0][i].values.Incidents)}
+
+  for (var i=0; i<kk1[0].length; i++)
+  {Area1.push(kk1[0][i].values.Incidents)}
 
   for (var i=0; i<kk2[0].length; i++)
-  {Area.push(kk2[0][i].values.Incidents)}
+  {Area2.push(kk2[0][i].values.Incidents)}
 
   for (var i=0; i<kk3[0].length; i++)
-  {Area2.push(kk3[0][i].values.Incidents)}
-
+  {Area3.push(kk3[0][i].values.Incidents)}
 
 
   /////////////////////////////////////////////////////////////////////
@@ -406,34 +440,48 @@ body p {
 
 
 
-  if (kk[kk.length-1] == 1 || kk[kk.length-1] == undefined)
-  {
+  if (kk[kk.length-1] == 3 ){
+    console.log('on devrait faire des departement')
+    var WB = data.dimension(function (d) {
+      return d["Numero Departement"];
+    });
+    file = "static/data/departements.json";
+    max = d3.max(Area3)
+    min = d3.min(Area3)
+    xExtent = d3.extent(Area3)
+    var_loc = 'code'
+  }
+
+  else if (kk[kk.length-1] == 2) {
+    console.log('on a dit commune')
+    var WB = data.dimension(function (d) {
+      return d["Code Commune"];
+    });
+    file = "static/data/communes.json";
+    max = d3.max(Area2)
+    min = d3.min(Area2)
+    xExtent = d3.extent(Area2)
+    var_loc = 'code'
+  }
+  else if (kk[kk.length-1] == 0) {
     var WB = data.dimension(function (d) {
       return d["NOM_IRIS"];
     });
-
-    //          		Dbug.push(WB)
-    // file = "static/data/iris_bspp_without_multipoly.json";
     file = "static/data/iris_bspp.json";
-    projection = d3.geo.mercator().center([2.70,48.85]).scale(42400)
-    max = d3.max(Area)
-    min = d3.min(Area)
-    xExtent = d3.extent(Area)
-    console.log(xExtent)
+    max = d3.max(Area0)
+    min = d3.min(Area0)
+    xExtent = d3.extent(Area0)
     var_loc = 'NOM_IRIS'
   }
-  else
+  else if (kk[kk.length-1] == 1 || kk[kk.length-1] == undefined)
   {
     var WB = data.dimension(function (d) {
       return d['Code Postal'];
     });
     file = "static/data/postcod.json";
-    projection = d3.geo.mercator().center([0.12,51.490]).scale(44800)
-    projection = d3.geo.mercator().center([2.70,48.85]).scale(42400)
-    max = d3.max(Area2)
-    min = d3.min(Area2)
-    xExtent = d3.extent(Area2)
-    console.log(xExtent)
+    max = d3.max(Area1)
+    min = d3.min(Area1)
+    xExtent = d3.extent(Area1)
     var_loc = 'ID'
   }
 
@@ -441,21 +489,24 @@ body p {
     return d["Event"];
   });
 
-  //projection = d3.geo.mercator().center([0.12,51.490]).scale(44800)
-
+  projection = d3.geo.mercator().center([2.70,48.85]).scale(42400)
   // Colour Range
 
   Bcol = ["#fff5f0", "#fee0d2", "#fcbba1", "#fc9272","#fb6a4a","#ef3b2c","#cb181d", "#a50f15","#67000d" ]
   Wcol = ["#E2F2FF", "#C4E4FF", "#9ED2FF", "#81C5FF", "#6BBAFF", "#51AEFF", "#36A2FF", "#1E96FF", "#0089FF", "#0061B5"]
 
-  Fcol = function() {if (kk[kk.length-1] == 1 || kk[kk.length-1] == undefined) {return Wcol} else {return Bcol}}
+  Fcol = function() {
+    if (kk[kk.length-1] == 1 || kk[kk.length-1] == undefined)
+      {return Bcol}
+    else {return Wcol}
+  }
 
   TT = []
 
 
   d3.json(file, function (lwjson) {
 
-
+    console.log(lwjson)
     var tip = d3.tip()
     .attr('class', 'd3-tip')
     .offset([-10, 0])

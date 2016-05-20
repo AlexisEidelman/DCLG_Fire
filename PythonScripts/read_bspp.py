@@ -25,8 +25,8 @@ to_remove = [u'ID207 Date De Début D intervention',
              'Numero Dans La Voie',
              'Type De Voie',
              'Libelle Voie',
-             'Code Commune', 'Libelle Commune',
-             'Numero Departement', 'Libelle Departement',
+             'Libelle Commune',
+             'Libelle Departement',
              'ID202 Numéro Intervention'
              ]
 tab1 = tab[[x for x in tab.columns if x not in to_remove]]
@@ -66,6 +66,7 @@ rename2 = {u'Motif De Départ 212 Motif De L alerte': "StopCodeDescription",
           }
 tab2.rename(columns = rename2, inplace=True)
 tab2[u'Code Postal'] = tab2[u'Code Postal'].astype(int)
+tab2[u'Numero Departement'] = tab2[u'Numero Departement'].astype(int)
 tab2['FirstPumpArriving_AttendanceTime'] = tab2['FirstPumpArriving_AttendanceTime'].astype(int)
 
 path_dest = "~/git/DCLG_Fire/static/data"
