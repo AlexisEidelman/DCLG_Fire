@@ -233,9 +233,7 @@ body p {
   };
 
 
-  projection = d3.geo.mercator()
-  .center([0.12,51.490])
-  .scale(44800)
+
 
   /////////////////////// Define Charts /////////////////////////////////////////////////////
 
@@ -285,10 +283,10 @@ body p {
     WardsM.filterAll()
 
     // d3.csv("static/data/LFB_Samp1000.csv", function (csv) {
-    d3.csv("static/data/LFB_TEST.csv", function (csv) {
+    d3.csv("static/data/BSPP_TEST2.csv", function (csv) {
 
       var monthF = d3.time.format("%b")
-      var dateFormat = d3.time.format("%d-%b-%y");
+      var dateFormat = d3.time.format("%d/%m/%Y");
       var timeFormat = d3.time.format("%X");
       var dteFormat = d3.time.format('%Y-%m-%d');
 
@@ -418,26 +416,35 @@ body p {
     });
 
     //          		Dbug.push(WB)
-    file = "static/data/GTest4.json";
+    // file = "static/data/iris_bspp_without_multipoly.json";
+    file = "static/data/iris_bspp.json";
+    projection = d3.geo.mercator().center([2.70,48.85]).scale(42400)
     max = d3.max(Area)
     min = d3.min(Area)
     xExtent = d3.extent(Area)
+    console.log(xExtent)
+    var_loc = 'NOM_IRIS'
   }
   else
   {
     var WB = data.dimension(function (d) {
       return d["BoroughName"];
     });
-    file = "static/data/BoroughSimp.json";
+    file = "static/data/postcod.json";
+    projection = d3.geo.mercator().center([0.12,51.490]).scale(44800)
+    projection = d3.geo.mercator().center([2.70,48.85]).scale(42400)
     max = d3.max(Area2)
     min = d3.min(Area2)
-    console.log(max)
     xExtent = d3.extent(Area2)
+    console.log(xExtent)
+    var_loc = 'ID'
   }
 
   var areaWB = WB.group().reduceCount(function (d) {
     return d["Event"];
   });
+
+  //projection = d3.geo.mercator().center([0.12,51.490]).scale(44800)
 
   // Colour Range
 
@@ -455,8 +462,9 @@ body p {
     var tip = d3.tip()
     .attr('class', 'd3-tip')
     .offset([-10, 0])
-    .html(function (d) { return "<span style='color: #f0027g'>"  + d3.select(this)['data']()[0]['properties']['NAME']  + "</span>"});
-
+    //.html(function (d) { return "<span style='color: #f0027g'>"  + d3.select(this)['data']()[0]['properties']['NAME']  + "</span>"});
+    console.log(lwjson)
+    console.log(lwjson.features);
     ll.push(lwjson.features)
     WardsM.width(650)
     .height(500)
@@ -467,14 +475,12 @@ body p {
     .colorDomain([min, max])
     .colorCalculator(function (d) { return d ? WardsM.colors()(d) : '#ccc'; })
     .overlayGeoJson(lwjson.features, "state", function (d) {
-      return d.properties.NAME;
+      return d.properties[var_loc];
     })
     .title(function (d,i) {TT.push([d.key,d.value]);
       return "Borough: " + d.key + ' '+ d.value
     })
 
-
-    console.log(xExtent)
 
     // 	bcheck = function() {if (kk[kk.length-1]==1 || kk[kk.length-1]== undefined) {return true} else {return false}}
     bcheck = function() {return true}
