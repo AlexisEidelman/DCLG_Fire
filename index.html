@@ -14,7 +14,7 @@ ga('send', 'pageview');
 
 <link rel="shortcut icon" href="static/favicon.ico">
 <meta charset="utf-8">
-<title> DCLG Fire Dashboard</title>
+<title> BSPP Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="">
 <meta name="author" content="">
@@ -86,10 +86,11 @@ body p {
 
 <div class="container">
   <br>
-  <h2>DCLG Map Component Test (LFB 2012 Open Data)</h2>
+  <h2>Carte interactive des interventions de la Brigade des Sapeurs
+  Pompiers de Paris</h2>
   <p>
-    Cette page tente d'adapter ce qui a été fait par le GDS. It explores the use of Geojson/Topojson for London Boroughs and Wards along with dynamic filtering
-    for each reported incident during 2012.
+    Cette page adapte à la BSSP ce qui a été fait par le GDS sur les données ouvertes
+    par les pompiers de Londres
   </p>
 
   <br>
@@ -106,12 +107,12 @@ body p {
       <!--         <a class="reset" href="javascript:WardsM.filterAll();dc.renderAll(WardsM);" style="display: none;">reset</a> -->
       <a class="reset" href="javascript:WardsM.filterAll();load();" style="display: none;">reset</a>
 
-      <span class="reset" style="display: none;"> | Current filter: <span class="filter"></span></span>
+      <span class="reset" style="display: none;"> | Filtre actuel: <span class="filter"></span></span>
 
       <div class="clearfix"></div>
 
 
-      <p style="color: #31708f"><strong>Note: </strong>Choropleth colour reflects total number of incidents in the ward or borough.</p>
+      <p style="color: #31708f"><strong>Note: </strong>L'intensité de la couleur correspond au nombre d'intervention dans la zone</p>
     </div>
     <!-- </div> -->
 
@@ -120,7 +121,7 @@ body p {
         <h4>
           <span>
             <span class="filter-count"></span>
-            incidents selected out of
+            interventions sélectionnées parmi
             <span class="total-count"></span>
             |
             <!-- 		<a href="javascript:dc.filterAll(); dc.renderAll();">Reset All</a> -->
@@ -138,7 +139,7 @@ body p {
 
 
   <div class="row">
-    <h4>Incidents By Time Range
+    <h4>Intervention en fonction de la date
       <span class="reset" style="float: right;"><span class="filter"></span></span>
       <a class="reset" href="javascript:LineChart.filterAll(); dayOfWeekChart.filterAll(); MonthChart.filterAll(); dc.redrawAll();" style="float: right;">Reset</a>
     </span>
@@ -159,7 +160,7 @@ body p {
 </div>
 
 <div class="row">
-  <h4>Incident & Property Types
+  <h4>Types d'intervention et catégories
     <span class="reset" style="float: right;"><span class="filter"></span></span>
     <a class="reset" href="javascript:PropType.filterAll();dc.redrawAll(); javascript:IncType.filterAll()" style="float: right;">Reset</a>
   </span>
@@ -180,12 +181,12 @@ body p {
       <thead>
         <tr class="header">
           <th>Date</th>
-          <th>TimeOfCall</th>
-          <th>IncidentType</th>
-          <th>PropertyType</th>
+          <th>Heure de l'intervention</th>
+          <th>Type d'intervention</th>
+          <th> (a compléter)</th>
           <!-- 		<th>Borough</th> -->
           <th>Iris</th>
-          <th>ArrivalTime</th>
+          <th>Délai d'intervention</th>
         </tr>
       </thead>
     </table>
@@ -195,8 +196,8 @@ body p {
   <hr>
 
   <footer>
-    <p class="pull-right"><a href="#">Back to top</a></p>
-    <p>D.Collins GDS 2014</p>
+    <p class="pull-right"><a href="#">Revenir en haut</a></p>
+    <p>A. Eidelman AGD d'après D.Collins GDS 2014</p>
   </footer>
 
 </div>
@@ -412,7 +413,7 @@ body p {
     return d.NOM_IRIS
   })
 
-  ////////////////////////////// Response Time ///////////////////////////////////
+  ////////////////////////////// Délai d'intervention ///////////////////////////////////
 
   var AttTime = data.dimension(function (d) {
     return d.FirstPumpArriving_AttendanceTime;
@@ -818,8 +819,8 @@ body p {
       .text(displayText);
     }
 
-    AddXAxis(TChart, "Response Time (s)");
-    AddXAxis(HourChart, "Incident Time (h)");
+    AddXAxis(TChart, "Délai d'intervention (en seconde)");
+    AddXAxis(HourChart, "Heure de l'appel (h)");
 
 
 
