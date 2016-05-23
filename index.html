@@ -14,7 +14,7 @@ ga('send', 'pageview');
 
 <link rel="shortcut icon" href="static/favicon.ico">
 <meta charset="utf-8">
-<title> DCLG Fire Dashboard</title>
+<title> BSPP Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="">
 <meta name="author" content="">
@@ -60,56 +60,37 @@ body p {
 
 <body>
 
-  <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-    <div class="container">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="#">DCLG Prototype</a>
-      </div>
-      <div class="collapse navbar-collapse">
-        <ul class="nav navbar-nav">
-          <li class="active"><a href="/">Home</a></li>
-          <li><a href="about">About</a></li>
-          <li><a href="contact">Contact</a></li>
-        </ul>
-      </div><!--/.nav-collapse -->
-    </div>
-  </div>
-</div>
-
 <!-- /////////////////////////////////////////////////////////////////////////// -->
 
 <div class="container">
   <br>
-  <h2>DCLG Map Component Test (LFB 2012 Open Data)</h2>
+  <h1>Carte interactive des interventions de la Brigade des Sapeurs
+  Pompiers de Paris</h1>
   <p>
-    Cette page tente d'adapter ce qui a été fait par le GDS. It explores the use of Geojson/Topojson for London Boroughs and Wards along with dynamic filtering
-    for each reported incident during 2012.
+    Cette page adapte à la BSSP ce qui a été fait par le GDS sur les données ouvertes
+    par les pompiers de Londres
   </p>
 
   <br>
   <div class="row">
-    <div class="col-md-7" id="wards">
+    <div class="col-md-7" id="carte">
       <div class="btn-group">
-        <button id="B" type="button" class="btn btn-default">Boroughs</button>
-        <button id="W" type="button" class="btn btn-default">Wards</button>
+        <button id="D" type="button" class="btn btn-default">Departement</button>
+        <button id="C" type="button" class="btn btn-default">Commune</button>
+        <button id="P" type="button" class="btn btn-default">Code Postal</button>
+        <button id="I" type="button" class="btn btn-default">Iris</button>
       </div>
 
       <!-- <strong>Borough/Ward Area:</strong> -->
       <!--         <a class="reset" href="javascript:WardsM.filterAll();dc.renderAll(WardsM);" style="display: none;">reset</a> -->
       <a class="reset" href="javascript:WardsM.filterAll();load();" style="display: none;">reset</a>
 
-      <span class="reset" style="display: none;"> | Current filter: <span class="filter"></span></span>
+      <span class="reset" style="display: none;"> | Filtre actuel: <span class="filter"></span></span>
 
       <div class="clearfix"></div>
 
 
-      <p style="color: #31708f"><strong>Note: </strong>Choropleth colour reflects total number of incidents in the ward or borough.</p>
+      <p style="color: #31708f"><strong>Note: </strong>L'intensité de la couleur correspond au nombre d'intervention dans la zone</p>
     </div>
     <!-- </div> -->
 
@@ -118,7 +99,7 @@ body p {
         <h4>
           <span>
             <span class="filter-count"></span>
-            incidents selected out of
+            interventions sélectionnées parmi
             <span class="total-count"></span>
             |
             <!-- 		<a href="javascript:dc.filterAll(); dc.renderAll();">Reset All</a> -->
@@ -136,7 +117,7 @@ body p {
 
 
   <div class="row">
-    <h4>Incidents By Time Range
+    <h4>Intervention en fonction de la date
       <span class="reset" style="float: right;"><span class="filter"></span></span>
       <a class="reset" href="javascript:LineChart.filterAll(); dayOfWeekChart.filterAll(); MonthChart.filterAll(); dc.redrawAll();" style="float: right;">Reset</a>
     </span>
@@ -157,7 +138,7 @@ body p {
 </div>
 
 <div class="row">
-  <h4>Incident & Property Types
+  <h4>Types d'intervention et catégories
     <span class="reset" style="float: right;"><span class="filter"></span></span>
     <a class="reset" href="javascript:PropType.filterAll();dc.redrawAll(); javascript:IncType.filterAll()" style="float: right;">Reset</a>
   </span>
@@ -178,12 +159,13 @@ body p {
       <thead>
         <tr class="header">
           <th>Date</th>
-          <th>TimeOfCall</th>
-          <th>IncidentType</th>
-          <th>PropertyType</th>
+          <th>Heure de l'intervention</th>
+          <th>Type d'intervention</th>
+          <th>Libellé CRI</th>
+          <th>Libellé CRI</th>
           <!-- 		<th>Borough</th> -->
-          <th>WardName</th>
-          <th>ArrivalTime</th>
+          <th>Iris</th>
+          <th>Délai d'intervention</th>
         </tr>
       </thead>
     </table>
@@ -193,15 +175,11 @@ body p {
   <hr>
 
   <footer>
-    <p class="pull-right"><a href="#">Back to top</a></p>
-    <p>D.Collins GDS 2014</p>
+    <p class="pull-right"><a href="#">Revenir en haut</a></p>
+    <p>A. Eidelman AGD d'après D.Collins GDS 2014</p>
   </footer>
 
 </div>
-
-
-
-
 
 
 
@@ -211,7 +189,7 @@ body p {
 <!-- <script src="js/jQuery2.0.2.js"></script> -->
 <script src="static/js/crossfilter.js"></script>
 <script src="static/js/dc.js"></script>
-<script src="http://code.jquery.com/jquery.js"></script>
+<script src="static/js/jquery-2.2.3.min.js"></script>
 <script src="static/js/bootstrap.js"></script>
 <script src="static/js/d3.tip.v0.6.3.js"></script>
 
@@ -219,27 +197,38 @@ body p {
 
 <script>
 
-  /////////////////////// Ward / Borough Selection ////////////////////////////////////
+  /////////////////////// Iris / Code Postal / Commune / Departement ////////////////////////////////////
   kk = []
   kk.push(1)
 
-  B.onclick = function() {
-    kk.push(0);
+  D.onclick = function() {
+    kk.push(3);
     load();
   };
-  W.onclick = function() {
+  C.onclick = function() {
+    kk.push(2);
+    load();
+  };
+
+  P.onclick = function() {
     kk.push(1);
     load();
   };
+  I.onclick = function() {
+    kk.push(0);
+    load();
+  };
+
+  // <button id="D" type="button" class="btn btn-default">Departement</button>
+  // <button id="C" type="button" class="btn btn-default">Commune</button>
+  // <button id="P" type="button" class="btn btn-default">Code Postal</button>
+  // <button id="I" type="button" class="btn btn-default">Iris</button>
 
 
-  projection = d3.geo.mercator()
-  .center([0.12,51.490])
-  .scale(44800)
 
   /////////////////////// Define Charts /////////////////////////////////////////////////////
 
-  var WardsM = dc.geoChoroplethChart("#wards");
+  var WardsM = dc.geoChoroplethChart("#carte");
   WardsM.on("preRender", function(chart) {
     chart.colorDomain(d3.extent(chart.data(),chart.valueAccessor()))
   })
@@ -261,10 +250,14 @@ body p {
 
   ll = []
   kk = []
+  kk0 = []
+  kk1 = []
   kk2 = []
   kk3 = []
-  Area = []
+  Area0 = []
+  Area1 = []
   Area2 = []
+  Area3 = []
   WA = []
   Wsum = []
 
@@ -285,10 +278,10 @@ body p {
     WardsM.filterAll()
 
     // d3.csv("static/data/LFB_Samp1000.csv", function (csv) {
-    d3.csv("static/data/LFB_TEST.csv", function (csv) {
+    d3.csv("static/data/BSPP_TEST2.csv", function (csv) {
 
       var monthF = d3.time.format("%b")
-      var dateFormat = d3.time.format("%d-%b-%y");
+      var dateFormat = d3.time.format("%d/%m/%Y");
       var timeFormat = d3.time.format("%X");
       var dteFormat = d3.time.format('%Y-%m-%d');
 
@@ -300,13 +293,12 @@ body p {
         d.Event = +1; // coerce to number
         d.time = timeFormat.parse(d.TimeOfCall)
         //         d.Hour = x2.getHours();
-        d.BoroughName = d.Postcode_district
         d.DATE = dteFormat(d.dd)
 
         respT.push(d.FirstPumpArriving_AttendanceTime)
         IT.push(d.Hour)
         UniqueInc.push(d.StopCodeDescription)
-        PropertyType.push(d.PropertyCategory)
+        PropertyType.push(d['Libellé CRI'])
 
       });
 
@@ -316,26 +308,39 @@ body p {
       var numberFormat = d3.format(",f");
 
       // kk2 contains number of wards in Borough and Total Area of Borough
-
-      console.log(i)
       WA.push(csv)
 
-      kk2.push(d3.nest().key(function(d) {return d.WardName})
+    kk0.push(d3.nest().key(function(d) {return d.NOM_IRIS})
       .rollup(function(leaves) { return {"Incidents": leaves.length, "total_area": d3.sum(leaves, function(d) {return parseFloat(d.IncidentGroup);})}
     })
     .entries(csv))
 
-    kk3.push(d3.nest().key(function(d) {return d.BoroughName})
-    .rollup(function(leaves) { return {"Incidents": leaves.length, "total_area": d3.sum(leaves, function(d) {return parseFloat(d.IncidentGroup);})}
-  })
-  .entries(csv))
+    kk1.push(d3.nest().key(function(d) {return d['Code Postal']})
+      .rollup(function(leaves) { return {"Incidents": leaves.length, "total_area": d3.sum(leaves, function(d) {return parseFloat(d.IncidentGroup);})}
+    })
+    .entries(csv))
+
+    kk2.push(d3.nest().key(function(d) {return d['Code Commune']})
+      .rollup(function(leaves) { return {"Incidents": leaves.length, "total_area": d3.sum(leaves, function(d) {return parseFloat(d.IncidentGroup);})}
+    })
+    .entries(csv))
+
+    kk3.push(d3.nest().key(function(d) {return d['Numero Departement']})
+      .rollup(function(leaves) { return {"Incidents": leaves.length, "total_area": d3.sum(leaves, function(d) {return parseFloat(d.IncidentGroup);})}
+    })
+    .entries(csv))
+
+  for (var i=0; i<kk0[0].length; i++)
+  {Area0.push(kk0[0][i].values.Incidents)}
+
+  for (var i=0; i<kk1[0].length; i++)
+  {Area1.push(kk1[0][i].values.Incidents)}
 
   for (var i=0; i<kk2[0].length; i++)
-  {Area.push(kk2[0][i].values.Incidents)}
+  {Area2.push(kk2[0][i].values.Incidents)}
 
   for (var i=0; i<kk3[0].length; i++)
-  {Area2.push(kk3[0][i].values.Incidents)}
-
+  {Area3.push(kk3[0][i].values.Incidents)}
 
 
   /////////////////////////////////////////////////////////////////////
@@ -362,7 +367,7 @@ body p {
   // 		var n_bins2 = 100; // for Group by Hour
 
 
-  var Hect = data.dimension(function(d) {return d.WardName;})
+  var Hect = data.dimension(function(d) {return d.NOM_IRIS;})
 
   HectCount = Hect.group()
   .reduceSum(function(d) {return +d.Event;})
@@ -380,10 +385,10 @@ body p {
   })
   var BWgroup = TDays.group()
   .reduceSum(function (d) {
-    return d.WardName
+    return d.NOM_IRIS
   })
 
-  ////////////////////////////// Response Time ///////////////////////////////////
+  ////////////////////////////// Délai d'intervention ///////////////////////////////////
 
   var AttTime = data.dimension(function (d) {
     return d.FirstPumpArriving_AttendanceTime;
@@ -411,53 +416,82 @@ body p {
 
 
 
-  if (kk[kk.length-1] == 1 || kk[kk.length-1] == undefined)
-  {
+  if (kk[kk.length-1] == 3 ){
+    console.log('on devrait faire des departement')
     var WB = data.dimension(function (d) {
-      return d["WardName"];
+      return d["Numero Departement"];
     });
-
-    //          		Dbug.push(WB)
-    file = "static/data/GTest4.json";
-    max = d3.max(Area)
-    min = d3.min(Area)
-    xExtent = d3.extent(Area)
+    file = "static/data/departements.json";
+    max = d3.max(Area3)
+    min = d3.min(Area3)
+    xExtent = d3.extent(Area3)
+    var_loc = 'code'
   }
-  else
-  {
+
+  else if (kk[kk.length-1] == 2) {
+    console.log('on a dit commune')
     var WB = data.dimension(function (d) {
-      return d["BoroughName"];
+      return d["Code Commune"];
     });
-    file = "static/data/BoroughSimp.json";
+    file = "static/data/communes.json";
     max = d3.max(Area2)
     min = d3.min(Area2)
-    console.log(max)
     xExtent = d3.extent(Area2)
+    var_loc = 'code'
+  }
+  else if (kk[kk.length-1] == 0) {
+    var WB = data.dimension(function (d) {
+      return d["NOM_IRIS"];
+    });
+    file = "static/data/iris_bspp.json";
+    max = d3.max(Area0)
+    min = d3.min(Area0)
+    xExtent = d3.extent(Area0)
+    var_loc = 'NOM_IRIS'
+  }
+  else if (kk[kk.length-1] == 1 || kk[kk.length-1] == undefined)
+  {
+    var WB = data.dimension(function (d) {
+      return d['Code Postal'];
+    });
+    file = "static/data/postcod.json";
+    max = d3.max(Area1)
+    min = d3.min(Area1)
+    xExtent = d3.extent(Area1)
+    var_loc = 'ID'
   }
 
   var areaWB = WB.group().reduceCount(function (d) {
     return d["Event"];
   });
 
+  projection = d3.geo.mercator().center([2.70,48.85]).scale(42400)
   // Colour Range
 
   Bcol = ["#fff5f0", "#fee0d2", "#fcbba1", "#fc9272","#fb6a4a","#ef3b2c","#cb181d", "#a50f15","#67000d" ]
   Wcol = ["#E2F2FF", "#C4E4FF", "#9ED2FF", "#81C5FF", "#6BBAFF", "#51AEFF", "#36A2FF", "#1E96FF", "#0089FF", "#0061B5"]
 
-  Fcol = function() {if (kk[kk.length-1] == 1 || kk[kk.length-1] == undefined) {return Wcol} else {return Bcol}}
+  Fcol = function() {
+    if (kk[kk.length-1] == 1 || kk[kk.length-1] == undefined)
+      {return Bcol}
+    else {return Wcol}
+  }
 
   TT = []
 
 
   d3.json(file, function (lwjson) {
 
-
+    console.log(lwjson)
     var tip = d3.tip()
     .attr('class', 'd3-tip')
     .offset([-10, 0])
-    .html(function (d) { return "<span style='color: #f0027g'>"  + d3.select(this)['data']()[0]['properties']['NAME']  + "</span>"});
+    //.html(function (d) { return "<span style='color: #f0027g'>"  + d3.select(this)['data']()[0]['properties']['NAME']  + "</span>"});
+    console.log(lwjson)
+    console.log(lwjson.features);
 
     ll.push(lwjson.features)
+
     WardsM.width(650)
     .height(500)
     .dimension(WB)
@@ -467,14 +501,12 @@ body p {
     .colorDomain([min, max])
     .colorCalculator(function (d) { return d ? WardsM.colors()(d) : '#ccc'; })
     .overlayGeoJson(lwjson.features, "state", function (d) {
-      return d.properties.NAME;
+      return d.properties[var_loc];
     })
     .title(function (d,i) {TT.push([d.key,d.value]);
-      return "Borough: " + d.key + ' '+ d.value
+      return "Code postal: " + d.key + ' '+ d.value
     })
 
-
-    console.log(xExtent)
 
     // 	bcheck = function() {if (kk[kk.length-1]==1 || kk[kk.length-1]== undefined) {return true} else {return false}}
     bcheck = function() {return true}
@@ -660,7 +692,7 @@ body p {
     ////////////////////////////////// PROPERTY TYPE ////////////////////////////////////
 
     var PropertyT = data.dimension(function(d) {
-      return d.PropertyCategory
+      return d['Libellé CRI']
     });
     var PropertyGrp = PropertyT.group();
 
@@ -726,11 +758,11 @@ body p {
     function(d) {
       return d.PropertyType;
     },
-    // 	function(d) {
-    // 				return d.Postcode_district;
-    // 				},
+  	function(d) {
+  				return d['Libellé CRI'];
+  				},
     function(d) {
-      return d.WardName;
+      return d.NOM_IRIS;
     },
     function(d) {
       return d.FirstPumpArriving_AttendanceTime;
@@ -764,8 +796,8 @@ body p {
       .text(displayText);
     }
 
-    AddXAxis(TChart, "Response Time (s)");
-    AddXAxis(HourChart, "Incident Time (h)");
+    AddXAxis(TChart, "Délai d'intervention (en seconde)");
+    AddXAxis(HourChart, "Heure de l'appel (h)");
 
 
 
