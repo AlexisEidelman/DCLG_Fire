@@ -34,14 +34,19 @@ tab1 = tab[[x for x in tab.columns if x not in to_remove]]
 # Comparaison avec le fichier de test
 # les séparateurs sont des ','
 
+tab1[u'Motif De Départ 212 Motif De L alerte'] = \
+    tab1[u'Motif De Départ 212 Motif De L alerte'].str.replace('DESECTORISATION - ', '')
 
+## regroupe les valeurs de Libéllé CRI
+val_counts = tab1['Libellé CRI'].value_counts()
+regroup = val_counts[val_counts < 100].index
+tab1.loc[tab1['Libellé CRI'].isin(regroup), 'Libellé CRI'] = 'Autre'
 
 #  <-
 rename = {'Numero Iris': "DCOMIRIS",
           u'Libelle Iris': "NOM_IRIS",
-
-
           }
+          
 tab1.rename(columns = rename, inplace=True)
 
 tab1.sort_values([u'GDH début'], inplace=True)
@@ -64,6 +69,7 @@ rename2 = {u'Motif De Départ 212 Motif De L alerte': "StopCodeDescription",
           #u'NOM_IRIS':'WardName',
           u'Total 329 Délai Présentation Des Premiers Intervenants':'FirstPumpArriving_AttendanceTime',
           }
+         
 tab2.rename(columns = rename2, inplace=True)
 tab2[u'Code Postal'] = tab2[u'Code Postal'].astype(int)
 tab2[u'Numero Departement'] = tab2[u'Numero Departement'].astype(int)

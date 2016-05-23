@@ -161,7 +161,8 @@ body p {
           <th>Date</th>
           <th>Heure de l'intervention</th>
           <th>Type d'intervention</th>
-          <th> (a compléter)</th>
+          <th>Libellé CRI</th>
+          <th>Libellé CRI</th>
           <!-- 		<th>Borough</th> -->
           <th>Iris</th>
           <th>Délai d'intervention</th>
@@ -179,10 +180,6 @@ body p {
   </footer>
 
 </div>
-
-
-
-
 
 
 
@@ -301,7 +298,7 @@ body p {
         respT.push(d.FirstPumpArriving_AttendanceTime)
         IT.push(d.Hour)
         UniqueInc.push(d.StopCodeDescription)
-        PropertyType.push(d.PropertyCategory)
+        PropertyType.push(d['Libellé CRI'])
 
       });
 
@@ -492,7 +489,9 @@ body p {
     //.html(function (d) { return "<span style='color: #f0027g'>"  + d3.select(this)['data']()[0]['properties']['NAME']  + "</span>"});
     console.log(lwjson)
     console.log(lwjson.features);
+
     ll.push(lwjson.features)
+
     WardsM.width(650)
     .height(500)
     .dimension(WB)
@@ -693,7 +692,7 @@ body p {
     ////////////////////////////////// PROPERTY TYPE ////////////////////////////////////
 
     var PropertyT = data.dimension(function(d) {
-      return d.PropertyCategory
+      return d['Libellé CRI']
     });
     var PropertyGrp = PropertyT.group();
 
@@ -759,9 +758,9 @@ body p {
     function(d) {
       return d.PropertyType;
     },
-    // 	function(d) {
-    // 				return d.Postcode_district;
-    // 				},
+  	function(d) {
+  				return d['Libellé CRI'];
+  				},
     function(d) {
       return d.NOM_IRIS;
     },
