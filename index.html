@@ -281,11 +281,13 @@ body p {
     d3.csv("static/data/BSPP_TEST2.csv", function (csv) {
 
       var monthF = d3.time.format("%b")
-      var dateFormat = d3.time.format("%d/%m/%Y");
+      var dateFormat = d3.time.format("%Y-%m-%d");
       var timeFormat = d3.time.format("%X");
       var dteFormat = d3.time.format('%Y-%m-%d');
 
+
       csv.forEach(function (d) {
+
         d.dd = dateFormat.parse(d.DateOfCall);
         d.month = +d.dd.getMonth(); // pre-calculate month for better performance
         d.day = d.dd.getDate();
@@ -297,13 +299,13 @@ body p {
 
         respT.push(d.FirstPumpArriving_AttendanceTime)
         IT.push(d.Hour)
-        UniqueInc.push(d.StopCodeDescription)
-        PropertyType.push(d['Libellé CRI'])
+        UniqueInc.push(d['LibelleMotifAlerte'])
+        PropertyType.push(d['LibelleMotifAlerteType'])
 
       });
 
 
-
+      console.log(csv)
 
       var numberFormat = d3.format(",f");
 
@@ -655,7 +657,7 @@ body p {
 
 
     var IncidentT = data.dimension(function(d) {
-      return d.StopCodeDescription
+      return d['LibelleMotifAlerte']
     });
     var IncidentGrp = IncidentT.group();
 
@@ -692,7 +694,7 @@ body p {
     ////////////////////////////////// PROPERTY TYPE ////////////////////////////////////
 
     var PropertyT = data.dimension(function(d) {
-      return d['Libellé CRI']
+      return d['LibelleMotifAlerteType']
     });
     var PropertyGrp = PropertyT.group();
 
@@ -753,13 +755,13 @@ body p {
     },
     function(d) {
       // 				return d.IncidentGroup;
-      return d.StopCodeDescription
+      return d['LibelleMotifAlerte']
     },
     function(d) {
       return d.PropertyType;
     },
   	function(d) {
-  				return d['Libellé CRI'];
+  				return d['LibelleMotifAlerteType'];
   				},
     function(d) {
       return d.NOM_IRIS;
